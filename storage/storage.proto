@@ -1,0 +1,43 @@
+syntax = "proto3";
+package storage;
+option go_package = "github.com/ytuox/elink-plugin-proto/storage";
+import "google/protobuf/empty.proto";
+
+message PutReq {
+  string pluginId = 1;
+  repeated KV data = 2;
+}
+
+message GetReq {
+  string pluginId = 1;
+  repeated string keys = 2;
+}
+
+message AllReq {
+  string pluginId = 1;
+}
+
+message DeleteReq {
+  string pluginId = 1;
+  repeated string keys = 2;
+}
+
+message KVs {
+  repeated KV kvs = 1;
+}
+
+message KV {
+  string key = 1;
+  bytes value = 2;
+}
+
+service Storage {
+  // all
+  rpc All(AllReq) returns(KVs);
+  // get
+  rpc Get(GetReq) returns (KVs);
+  // put
+  rpc Put(PutReq) returns (google.protobuf.Empty);
+  // delete
+  rpc Delete(DeleteReq) returns (google.protobuf.Empty);
+}

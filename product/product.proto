@@ -1,0 +1,136 @@
+syntax = "proto3";
+package product;
+option go_package = "github.com/ytuox/elink-plugin-proto/product";
+import "common/common.proto";
+
+
+message QueryProductListRequest {
+  common.BaseRequest baseRequest = 1;
+}
+
+message QueryProductListResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    uint32 total = 1;
+    repeated Product products = 2;
+  }
+  Data data = 2;
+}
+
+message QueryProductByIdRequest {
+  common.BaseRequest baseRequest = 1;
+  string id = 2;
+}
+
+enum ProductNodeType {
+  UnKnow = 0; // 未知
+  Device = 1;  // 设备
+  Gateway = 2; // 网关
+  SubDevice = 3; // 子设备
+}
+
+enum ProductNetType {
+  Wifi = 0; // WIFI
+  Cellular = 1; // 蜂窝
+  Ethernet = 2; // 以太网
+  BLE = 3; // BLE
+  LoRaWAN = 4; // LoRaWAN
+  SerialPort = 5; // 串口
+  Other = 6; // 其他
+}
+
+enum dataFormatType {
+  Standard = 0;  // 标准物模型
+  Custom = 1; // 透传/自定义
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  ProductNodeType NodeType = 4; // 产品的节点类型
+  dataFormatType dataFormat = 5; // 上报数据的格式
+  ProductNetType netType = 6; // 联网方式
+  string protocolType = 7; // 协议类型
+  string categoryKey = 8; // 设备类别
+  string ManufacturerName = 9; // 制造商
+  string ModelNumber = 10; // 产品型号
+  string pluginId = 11; // 插件ID
+  string pluginParams = 12; // 插件参数
+  repeated Properties properties = 13; // 属性
+  repeated Events events = 14; // 事件
+  repeated Services services = 15; // 动作
+}
+
+message Properties {
+  string modelName = 1;
+  string productId = 2;
+  string name = 3;
+  string identifier = 4;
+  string desc = 5;
+  bool required = 6;
+  string mode = 7;
+  Define define = 8;
+}
+
+message Events {
+  string modelName = 1;
+  string productId = 2;
+  string name = 3;
+  string identifier = 4;
+  string desc = 5;
+  bool required = 6;
+  string type = 7;
+  repeated InputOutput params = 8;
+}
+
+
+message InputOutput {
+  string identifier = 1;
+  string name = 2;
+  Define define = 3;
+}
+
+enum DataType {
+  INT = 0;
+  FLOAT = 1;
+  TEXT = 2;
+  DATE = 3;
+  BOOL = 4;
+  ENUM = 5;
+  STRUCT = 6;
+  ARRAY = 7;
+}
+
+message Define {
+  string type = 1;//设备属性的数据类型
+  string specs = 2;
+}
+
+
+message Services {
+  string modelName = 1;
+  string productId = 2;
+  string name = 3;
+  string identifier = 4;
+  string callType = 5;
+  string desc = 6;
+  bool required = 7;
+  repeated InputOutput Input = 8;
+  repeated InputOutput Output = 9;
+}
+
+message QueryProductByIdResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    Product product = 1;
+  }
+  Data data = 2;
+}
+
+service RPCProduct {
+  // 获取所有设备 edge s  c
+  rpc QueryProductList(QueryProductListRequest) returns (QueryProductListResponse) {}
+  // 获取设备 edge s  c
+  rpc QueryProductById(QueryProductByIdRequest) returns (QueryProductByIdResponse) {}
+}

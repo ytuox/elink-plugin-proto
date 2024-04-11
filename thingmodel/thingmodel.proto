@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package thingmodel;
+option go_package = "github.com/ytuox/elink-plugin-proto/thingmodel";
+import "google/protobuf/empty.proto";
+import "common/common.proto";
+
+enum OperationType {
+  UNSPECIFIED = 0;
+  //下发相关
+  PROPERTY_SET = 1;   // 下发属性设置请求
+  PROPERTY_GET = 2;   // 下发属性查询请求
+  SERVICE_EXECUTE = 3;     // 下发设备动作执行请求
+  PROPERTY_REPORT_RESPONSE = 4;   // 云端响应上报属性消息
+  EVENT_REPORT_RESPONSE = 5;  // 云端响应上报事件消息
+  DATA_BATCH_REPORT_RESPONSE = 6;   // 云端响应批量上报消息
+  PROPERTY_DESIRED_GET_RESPONSE = 7;  // 云端响应设备上报向云端获取属性期望值请求
+  PROPERTY_DESIRED_DELETE_RESPONSE = 8;  // 云端响应设备上报向云端发送清除属性期望值请求
+  CUSTOM_MQTT_PUBLISH = 9; //云端自定义topic 消息下发
+  //上报相关
+  PROPERTY_REPORT = 20;    // 属性上报
+  PROPERTY_SET_RESPONSE = 21;   // 响应云端下发属性请求
+  PROPERTY_GET_RESPONSE = 22;   // 响应云端下发属性查询请求
+  SERVICE_EXECUTE_RESPONSE = 23;     // 响应云端下发设备服务调用请求
+  EVENT_REPORT = 24;  // 事件上报
+  DATA_BATCH_REPORT = 25;     // 设备批量上报数据
+  PROPERTY_DESIRED_GET = 26;  // 设备上报向云端获取属性期望值请求
+  PROPERTY_DESIRED_DELETE = 27;  // 设备上报向云端发送清除属性期望值请求
+}
+
+// 物模型消息上报
+message ThingModelMsgUpRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2; // 下发的目标设备id
+  OperationType operationType = 3;
+  string data = 4;
+}
+
+// 物模型消息下发
+message ThingModelMsgDownRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2; // 下发的目标设备id
+  OperationType operationType = 3;
+  string data = 4;
+}
+
+// 查询物模型设备影子请求
+message QueryThingModelShadowRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2;
+  OperationType operationType = 3;
+  string identifier = 4;
+}
+
+// 查询物模型设备影子响应
+message QueryThingModelShadowResponse {
+  common.CommonResponse baseResponse = 1;
+  string deviceId = 2;
+  string data = 3;
+}
+
+service RPCThingModel {
+  rpc ThingModelMsgUp(ThingModelMsgUpRequest) returns (common.CommonResponse) {}
+  rpc ThingModelMsgDown(ThingModelMsgDownRequest) returns (google.protobuf.Empty) {}
+  rpc QueryThingModelShadow(QueryThingModelShadowRequest) returns (QueryThingModelShadowResponse) {}
+}

@@ -1,0 +1,45 @@
+syntax = "proto3";
+package app;
+option go_package = "github.com/ytuox/elink-plugin-proto/app";
+import "common/common.proto";
+
+message QueryAppByPlatformRequest {
+}
+
+enum AppStatus {
+  Stop = 0;
+  Start = 1;
+  Error = 2;
+}
+
+message QueryAppByPlatformResponse {
+  string appId = 1;
+  string address = 2;
+  string appName = 3;
+  AppStatus status = 4;
+}
+
+message ReportPlatformInfoRequest {
+  string pluginId = 1;
+}
+
+message ReportPlatformInfoResponse {
+  common.CommonResponse baseResponse = 1;
+}
+
+
+message AppSendCommandRequest {
+  string deviceId = 1; // 下发的目标设备id
+  string ServiceId = 2;
+  string data = 3;
+}
+
+message AppSendCommandResponse {
+  common.CommonResponse baseResponse = 1;
+}
+
+
+service RPCApp {
+  // 应用发送到平台
+  rpc SendCommand(AppSendCommandRequest) returns (AppSendCommandResponse) {}
+}

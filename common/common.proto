@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package common;
+import "google/protobuf/empty.proto";
+option go_package = "github.com/ytuox/elink-plugin-proto/common";
+
+message BaseRequest {
+   string pluginId = 1;
+   int64 direction = 2;
+}
+
+message CommonResponse {
+   string requestId = 1;
+   string message = 2;
+   string code = 3;
+   bool success = 4;
+}
+
+message Pong {
+   string timestamp = 1;
+}
+
+message VersionResponse {
+   string version = 1;
+}
+
+enum PluginStatus {
+   Stop = 0;
+   Start = 1;
+   Error = 2;
+ }
+
+message pluginNotifyRequest {
+   string name = 1;
+   PluginStatus status = 2;
+   uint64 happenTime = 3;
+ }
+ 
+
+service Common {
+   // Ping tests whether the service is working
+   rpc Ping(google.protobuf.Empty) returns (Pong) {}
+   // Version obtains version information from the target service.
+   rpc Version(google.protobuf.Empty) returns (VersionResponse) {}
+   rpc PluginNotify(pluginNotifyRequest) returns (google.protobuf.Empty) {}
+}

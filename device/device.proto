@@ -1,0 +1,166 @@
+syntax = "proto3";
+package device;
+option go_package = "github.com/ytuox/elink-plugin-proto/device";
+import "common/common.proto";
+
+message ConnectIotPlatformRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2;
+}
+
+message ConnectIotPlatformResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    ConnectStatus status = 1;
+  }
+  Data data = 2;
+}
+
+message DisconnectIotPlatformRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2;
+}
+
+message DisconnectIotPlatformResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    ConnectStatus status = 1;
+  }
+  Data data = 2;
+}
+
+message QueryDeviceByIdRequest {
+  common.BaseRequest baseRequest = 1;
+  string id = 2;
+}
+
+message QueryDeviceByIdResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    Device device = 1;
+  }
+  Data data = 2;
+}
+
+enum DeviceStatus {
+  UnKnow = 0; // 未知
+  UnActive = 1; // 未激活
+  Offline = 2; // 离线
+  Online = 3; // 在线
+  Disable = 4; // 禁用
+}
+
+message Device {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string productId = 4;
+  DeviceStatus status = 5;
+  string deviceSn  = 6;
+  string secret = 7;
+  string appId = 8;
+  string location = 9;
+  string createdBy = 10;
+}
+
+message QueryDeviceListRequest {
+  common.BaseRequest baseRequest = 1;
+}
+
+message QueryDeviceListByUserIdRequest {
+  common.BaseRequest baseRequest = 1;
+  string userId = 2;
+}
+
+message QueryDeviceListResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    uint32 total = 1;
+    repeated Device devices = 2;
+  }
+  Data data = 2;
+}
+
+message AddDevice {
+  string name = 1;
+  string productId = 2;
+  string description = 3;
+  string deviceSn = 4;
+  string appId = 5;
+  string location = 6;
+}
+
+message CreateDeviceRequest {
+  common.BaseRequest baseRequest = 1;
+  AddDevice device = 2;
+}
+
+message CreateDeviceRequestResponse {
+  message Data {
+    Device devices = 2;
+  }
+  common.CommonResponse baseResponse = 1;
+  Data data = 2;
+}
+
+message CreateDeviceAndConnectRequest {
+  AddDevice device = 1;
+}
+
+message CreateDeviceAndConnectRequestResponse {
+  common.CommonResponse baseResponse = 1;
+  message Data {
+    Device devices = 1;
+  }
+  Data data = 2;
+}
+
+message DeleteDeviceRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2;
+}
+
+message DeleteDeviceResponse {
+  common.CommonResponse baseResponse = 1;
+}
+
+message GetDeviceConnectStatusRequest {
+  common.BaseRequest baseRequest = 1;
+  string deviceId = 2;
+}
+
+enum ConnectStatus {
+  UnACTIVE = 0;//未激活
+  OFFLINE = 1;//离线
+  ONLINE = 2;//在线
+  DISABLE = 3;//禁用
+}
+
+message GetDeviceConnectStatusResponse {
+  message Data {
+    ConnectStatus status = 1;
+  }
+  common.CommonResponse baseResponse = 1;
+  Data data = 2;
+}
+
+service RPCDevice {
+  // 设备连接云服务 edge s  c
+  rpc ConnectIotPlatform(ConnectIotPlatformRequest) returns (ConnectIotPlatformResponse) {}
+  // 设备断开连接云服务
+  rpc DisconnectIotPlatform(DisconnectIotPlatformRequest) returns (DisconnectIotPlatformResponse) {}
+  // 设备连接状态
+  rpc GetDeviceConnectStatus (GetDeviceConnectStatusRequest) returns(GetDeviceConnectStatusResponse){}
+  // 获取驱动所有设备
+  rpc QueryDeviceList(QueryDeviceListRequest) returns (QueryDeviceListResponse) {}
+  // 获取设备
+  rpc QueryDeviceById(QueryDeviceByIdRequest) returns (QueryDeviceByIdResponse) {}
+  // 获取用户所有设备
+  rpc QueryDeviceListByUserId(QueryDeviceListByUserIdRequest) returns (QueryDeviceListResponse) {}
+  // 创建设备
+  rpc CreateDevice(CreateDeviceRequest) returns (CreateDeviceRequestResponse) {}
+  // 创建设备并且建立连接
+  rpc CreateDeviceAndConnect(CreateDeviceAndConnectRequest) returns (CreateDeviceAndConnectRequestResponse) {}
+  // 删除设备
+  rpc DeleteDevice(DeleteDeviceRequest) returns (DeleteDeviceResponse) {}
+}

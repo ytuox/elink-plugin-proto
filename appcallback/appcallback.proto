@@ -1,0 +1,18 @@
+syntax = "proto3";
+package appcallback;
+option go_package = "github.com/ytuox/elink-plugin-proto/appcallback";
+import "google/protobuf/empty.proto";
+import "app/app.proto";
+
+
+message appStatusCallbackRequest {
+  string appName = 1;
+  app.AppStatus status = 2;
+  uint64 happenTime = 3;
+}
+
+service AppCallBackService {
+  // 云实例状态回调 edge = c  = s
+  rpc AppStatusCallback(appStatusCallbackRequest) returns (google.protobuf.Empty) {}
+}
+
